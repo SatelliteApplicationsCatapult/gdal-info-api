@@ -15,9 +15,16 @@ if IN_GDAL_DOCKER:
 def get_info():
     filePath = request.json['file_url']
     # call the gdalinfo command with the filePath
-    result = subprocess.run(command + filePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # return the result as json response
-    return json.loads(result.stdout)
+    try:
+        result = subprocess.run(command + filePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        error = result.stderr.decode('utf-8')
+        if error:
+            return {'error': error}
+        # print("Error: ", result.stderr.decode('utf-8'))
+        # print("Output: ", result.stdout.decode('utf-8'))
+        return json.loads(result.stdout.decode('utf-8'))
+    except json.decoder.JSONDecodeError as e:
+        return {'error': "File you are pointing to might not exist or is not a valid file."}
 
 if __name__ == '__main__':
     app.run()

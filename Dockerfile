@@ -7,5 +7,5 @@ COPY requirements.txt /app
 RUN pip install -r requirements.txt
 ENV IN_GDAL_DOCKER true
 COPY . /app
-# run main with gunicon
-CMD ["gunicorn", "-b", ":5000","--timeout","0", "main:app"] 
+EXPOSE 80
+CMD gunicorn --config gunicorn.py main:app
