@@ -21,6 +21,8 @@ def get_info():
         if error:
             if "ERROR 1" in error:
                 return json.dumps({"error": "File not found"}), 404
+            else:
+                return json.dumps({"error": error}), 400
         # print("Error: ", result.stderr.decode('utf-8'))
         # print("Output: ", result.stdout.decode('utf-8'))
         return json.loads(result.stdout.decode('utf-8'))
