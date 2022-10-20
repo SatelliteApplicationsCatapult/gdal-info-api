@@ -27,7 +27,7 @@ def get_info():
         # print("Output: ", result.stdout.decode('utf-8'))
         return json.loads(result.stdout.decode('utf-8'))
     except json.decoder.JSONDecodeError as e:
-        return {'error': "File you are pointing to might not exist or is not a valid file."}
+        return {'error': "File you are pointing to might not exist or is not a valid file."}, 400
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=7002)
