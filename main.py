@@ -10,21 +10,29 @@ command = """docker run --rm osgeo/gdal:ubuntu-full-latest gdalinfo -json """
 if IN_GDAL_DOCKER:
     command = """gdalinfo -json """
 
-
 @app.route('/', methods=['POST'])
 def get_info():
-    filePath = request.json['file_url']
+    # if /stac-item path exists on system, take the file from there
+    # otherwise, take the file from the request body
+    filePathFromRequest = request.json['file_url']
+    filePath = None
+    if os.path.exists('/stac-items'):
+        print("Got file from local file system")
+        filePath = '/stac-items/' + filePathFromRequest.split("/")[-1]
+    else:
+        filePath = filePathFromRequest
+
     # call the gdalinfo command with the filePath
     try:
-        result = subprocess.run(command + filePath, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        full_command = command + filePath
+        print(full_command)
+        result = subprocess.run(full_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         error = result.stderr.decode('utf-8')
         if error:
             if "ERROR 1" in error:
                 return json.dumps({"error": "File not found"}), 404
             else:
                 return json.dumps({"error": error}), 400
-        # print("Error: ", result.stderr.decode('utf-8'))
-        # print("Output: ", result.stdout.decode('utf-8'))
         return json.loads(result.stdout.decode('utf-8'))
     except json.decoder.JSONDecodeError as e:
         return {'error': "File you are pointing to might not exist or is not a valid file."}, 400
