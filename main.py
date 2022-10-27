@@ -17,7 +17,6 @@ def get_info():
     filePathFromRequest = request.json['file_url']
     filePath = None
     if os.path.exists('/stac-items'):
-        print("Got file from local file system")
         filePath = '/stac-items/' + filePathFromRequest.split("/")[-1]
     else:
         filePath = filePathFromRequest
@@ -33,6 +32,7 @@ def get_info():
                 return json.dumps({"error": "File not found"}), 404
             else:
                 return json.dumps({"error": error}), 400
+        # TODO: urls might need to be re-written to include the original filePathFromRequest ?
         return json.loads(result.stdout.decode('utf-8'))
     except json.decoder.JSONDecodeError as e:
         return {'error': "File you are pointing to might not exist or is not a valid file."}, 400
