@@ -5,9 +5,7 @@ returns the GDAL Info STAC Data.
 
 ## Build Jobs
 
-Two build jobs set up, for building both prod and dev docker image
-from Dockerfile_dev and Dockerfile_prod.
-
+Two build jobs set up, for building both prod and dev docker image.
 ## Environment variables
 
 |Var name|Used for|
